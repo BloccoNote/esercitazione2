@@ -1,0 +1,15 @@
+#compiler
+[Cc]ompiler/
+.vscode/
+
+#bin files
+bin/
+*.exe
+
+#tests
+tests/
+
+#doxygen
+doxygen/
+
+

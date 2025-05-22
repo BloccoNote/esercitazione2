@@ -22,24 +22,6 @@ using namespace std;
 
 
 
-
-
-
-
-/*
-0 – Esci dal menù 
-
-1 – Visualizza la vectora delle funzioni  
-
-2 – Inserisci una funzione  
-
-3 – Elimina una funzione  
-
-4 – Elimina tutte le funzioni  
-
-5 – Seleziona una funzione  
-*/
-
 /// @brief entry point of program
 /// @return 0 or non zero value if errors 
 int main(){
@@ -53,13 +35,13 @@ int main(){
 		switch (mode)
 		{
 		case 0:
+			eraseAllFunctions(F); // avoid memory leak
 			return 0;
 			break;
 		
 		case 1:
 			printFunctionList(F);
-			cout << "(press enter to continue)" << endl;
-			getchar();
+			safeInsert();
 			break;
 
 		case 2:

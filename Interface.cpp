@@ -1,107 +1,50 @@
 /*! @file Interface.cpp
-	@brief implementation of interface functions 
-	@author Alessandro Maryni & Mauro Gori
-	@note formerly Gori_func.cpp
+	@brief implementation of Interface.h functions 
+	@authors Alessandro Maryni & Mauro Gori
 */ 
 
 
 #include "Interface.h"
 #include "safeInsert.h"
 
-///@brief polynomial function creation wizard
-///@param f reference of pointers to class Function
-///@returns true if succesful
-///@note inserts in the array of pointers the created function
-bool insertPoly(vector<Function *> &f){
-	double* c;	//pointer to int array
-    int d;		//degree
-	Polynomial* p;
-	printf("\e[1;1H\e[2J");
-	cout<<"### Polynomial Function creation wizard###"<<endl;
-	cout<<"insert function degree"<<endl;
-	safeInsert(d, 0, GE);
-	c = new double[d + 1];
-	for(int i = 0; i < d +1; i++){
-		cout<<"insert coefficent of degree: "<<i<<endl;
-		safeInsert(c[i]);
-	}
-	
-	p = new Polynomial(c, d + 1);
-	f.push_back(p);
-	return true;
-}
-//k * x ^ e
-///@brief Power Function creation wizard
-///@param f reference of pointers to class Function
-///@returns true if successful
-///@note inserts in the array of pointers the created function
-bool insertPow(vector<Function *> &f){
-	double k;
-	double e;
-	Power* p;
-	printf("\e[1;1H\e[2J");
-	cout<<"### Power Function creation wizard ###"<<endl;
-	cout<<"insert k coefficent"<<endl;
-	safeInsert(k);
-	cout<<"insert e coefficent"<<endl;
-	safeInsert(e);
-	p = new Power(k, e);
-	f.push_back(p);
-	return true;
-}
-///@brief Exponential Function creation wizard
-///@param f reference of pointers to class Function
-///@returns true if successful
-///@note inserts in the array of pointers the created function
-bool insertExp(vector<Function *> &f){
-	double k;
-	double b;
-	double c;
-	Exponential* e;
-	printf("\e[1;1H\e[2J");
-	cout<<"### Exponential Function creation wizard ###"<<endl;
-	cout<<"insert k coefficent"<<endl;
-	safeInsert(k);
-	cout<<"insert c coefficent"<<endl;
-	safeInsert(c);
-	cout<<"insert b coefficent"<<endl;
-	safeInsert(b, 0, GT);
-	e = new Exponential(k, b ,c);
-	f.push_back(e);
-	return true;
-	
-}
+// ##################### MENU FUNCTIONS #####################
 
 /// @brief prints main menu and make the user choose the mode
 /// @return returns the  mode, integer from 0 to 5
 int menu(){
 	int mode = 0;
 	int try_num = 0;
-	printf("\e[1;1H\e[2J");
+	clrscr();
 	cout << "### main menu ###" << endl;
 	cout << "insert selection and press enter" << endl;
-	cout << "0 - Exit menu  and program" << endl;
+	cout << "0 - Exit menu and program" << endl;
 	cout << "1 - visualize function vector" << endl;
 	cout << "2 - Insert a function" << endl;
 	cout << "3 - Erase a function" << endl;
 	cout << "4 - Erase all function" << endl;
-	cout << "5 - Select a function" << endl;
+	cout << "5 - Select a function to evaluate" << endl;
 	if(!safeInsert(mode, 0 , 5)) return -1;
 
 	return mode;
 }
 
+///@brief prints menu that explane choices in insertFunction();
+///@return selection 
+int insertFunctionMenu(){
+	int select;
+	clrscr();
+	cout<<"### function creation wizard ###"<< endl;
+	cout<<"0 - return to main menu"<<endl;
+	cout<<"1 - create logarithmic function"<<endl;
+	cout<<"2 - create polynomial function"<<endl;
+	cout<<"3 - create power function"<<endl;
+	cout<<"4 - create exponential function"<<endl;
+	if(!safeInsert(select, 0, 4)) return -1;
+	return select;
+}
 
-/*
 
-function indexes
-0 exit
-1 log
-2 poly
-3 pow
-4 exp
-
-*/
+// ##################### INSERT FUNCTIONS #####################
 
 ///@brief allow to insert function to funciton pointer array f
 ///@param f reference of pointers to class Functionion 
@@ -137,13 +80,143 @@ bool insertFunction(vector<Function *> &f){
 	return true;	
 }
 
+///@brief logarithmic function creator
+///@param f reference of pointers to class Function
+///@returns true if successful
+bool insertLog(vector<Function *> &f){
+	double b;
+	double k;
+	Logarithmic* l;
+	l = new Logarithmic;
+	clrscr();
+	cout <<"### logarithmic function creation wizard ###"<< endl << endl;
+	cout << "Logarithmic has the form: k * logb(x)" << endl << endl;
+	cout<<"insert k coefficent"<<endl;
+	safeInsert(k);
+	cout << " Log: "<< k << " * logb(x)" << endl;
+	while(1){
+		cout<<"insert base coefficent \nbase coefficent must be > 0 and not 1"<<endl;
+		safeInsert(b, 0 ,GT);
+		if(b != 1){
+			break;
+		}else{
+			cout<<"[ ERROR ] b coefficent should be not equal to 1"<< endl;
+		}
+	}
+	l->SetLogarithmic(b, k);
+	Function* func = l;
+	f.push_back(func);
+	clrscr();
+	cout << "### FINAL LOGARITHM ###" << endl;
+	cout << "Log = ";
+	l->Dump();
+	safeInsert();
+	return true;
+}
+
+///@brief polynomial function creation wizard
+///@param f reference of pointers to class Function
+///@returns true if succesful
+///@note inserts in the array of pointers the created function
+bool insertPoly(vector<Function *> &f){
+	double* c;	//pointer to int array
+    int d;		//degree
+	Polynomial* p;
+	clrscr();
+	cout << "### Polynomial Function creation wizard###"<<endl << endl;
+	cout << "Polynomial has the form: c0 + c1 * x^1 + ... + c(deg-1) * x^(deg-1)" << endl;
+	cout << "insert function degree"<<endl;
+	safeInsert(d, 0, GE);
+	if(d > 10){
+		int is_not_ok = 1;
+		cout << "[ WARNING ] you have selected a high poly degree " << endl;
+		cout << "Are you sure ? \n[y = 0 / n = 1]" << endl;
+		safeInsert(is_not_ok, 0, 1);
+		if(is_not_ok){
+			cout << "insert function degree" << endl;
+			cout << "[ WARNING ] last chance to insert degree before insertion of coefficents" << endl;
+			safeInsert(d, 0 , GE);
+		}
+	}
+	c = new double[d + 1];
+	for(int i = 0; i < d +1; i++){
+		cout<<"insert coefficent of degree: c "<< i << "  out of " << d <<endl;
+		safeInsert(c[i]);
+	}
+	p = new Polynomial(c, d + 1);
+	clrscr();
+	cout << "### FINAL POLYNOMIAL ###" << endl;
+	cout << "Poly = ";
+	p->Dump();
+	f.push_back(p);
+	return true;
+}
+
+///@brief Power Function creation wizard
+///@param f reference of pointers to class Function
+///@returns true if successful
+///@note inserts in the array of pointers the created function
+bool insertPow(vector<Function *> &f){
+	double k;
+	double e;
+	Power* p;
+	clrscr();
+	cout << "### Power Function creation wizard ###"<< endl << endl;
+	cout << "Power has the form: k * x^e" << endl;
+	cout << "insert k coefficent" << endl;
+	safeInsert(k);
+	cout << "Pow = "<< k << "x^e" << endl;
+	cout << "insert e coefficent" << endl;
+	safeInsert(e);
+	p = new Power(k, e);
+	f.push_back(p);
+	clrscr();
+	cout << "### FINAL POWER ###" << endl;
+	cout << "Pow = ";
+	p->Dump();
+	safeInsert();
+	return true;
+}
+
+///@brief Exponential Function creation wizard
+///@param f reference of pointers to class Function
+///@returns true if successful
+///@note inserts in the array of pointers the created function
+bool insertExp(vector<Function *> &f){
+	double k;
+	double b;
+	double c;
+	Exponential* e;
+	clrscr();
+	cout << "### Exponential Function creation wizard ###" << endl << endl;
+	cout << "Exponential has the form: k * b^(c * x)" << endl;
+	cout << "insert k coefficent" << endl;
+	safeInsert(k);
+	cout << "Exp = "<<  k <<" * b^(c * x)" << endl;
+	cout << "insert b coefficent" << endl;
+	safeInsert(b, 0, GT);
+	cout << "Exp = "<<  k <<" * " << b << "^(c * x)" << endl;
+	cout << "insert c coefficent" << endl;
+	safeInsert(c);
+	e = new Exponential(k, b ,c);
+	f.push_back(e);
+	clrscr();
+	cout << "### FINAL EXPONENTIAL ###" << endl;
+	cout << "Exp = ";
+	e->Dump();
+	safeInsert();
+	return true;
+}
+
+
+// ##################### UTILITY FUNCTIONS #####################
 
 ///@brief prints list of existing function objects
 ///@param f reference of pointers to class Function
 ///@returns true if printed successfully or false if array is empty
 bool printFunctionList(vector<Function *> &f){
 	int size = f.size();
-	printf("\e[1;1H\e[2J");
+	clrscr();
 	cout << "### Function vector ###" << endl;
 	if(f.empty()){
 		cout << endl << "[ INFO ] vector is empty " << endl << endl;
@@ -151,7 +224,7 @@ bool printFunctionList(vector<Function *> &f){
 	}
 	else{
 		for(int i = 0; i < size; i++){
-			cout << i << ":   ";
+			cout << i << ":  f(x) = ";
 			f[i]->Dump();
 		}
 	}
@@ -191,47 +264,6 @@ bool eraseAllFunctions(vector<Function *> &f){
 	return true;
 }
 
-///@brief logarithmic function creator
-///@param f reference of pointers to class Function
-///@returns true if successful
-bool insertLog(vector<Function *> &f){
-	double b;
-	double k;
-	Logarithmic* l;
-	l = new Logarithmic;
-	printf("\e[1;1H\e[2J");
-	cout<<"### logarithmic function creation wizard ###"<<endl;
-	while(1){
-		cout<<"insert base coefficent \nbase coefficent must be > 0 and not 1"<<endl;
-		safeInsert(b, 0 ,GT);
-		if(b != 1){
-			break;
-		}else{
-			cout<<"[ ERROR ] b coefficent should be not equal to 1"<< endl;
-		}
-	}
-	cout<<"insert k coefficent"<<endl;
-	safeInsert(k);
-	l->SetLogarithmic(b, k);
-	Function* func = l;
-	f.push_back(func);
-	return true;
-}
-
-///@brief prints menu to select function to create
-///@returns selection 
-int insertFunctionMenu(){
-	int select;
-	printf("\e[1;1H\e[2J");
-	cout<<"### function creation wizard ###"<< endl;
-	cout<<"0 - return to main menu"<<endl;
-	cout<<"1 - create logarithmic function"<<endl;
-	cout<<"2 - create polynomial function"<<endl;
-	cout<<"3 - create power function"<<endl;
-	cout<<"4 - create exponential function"<<endl;
-	if(!safeInsert(select, 0, 4)) return -1;
-	return select;
-}
 
 ///@brief allows the user to pick a specific function from the object array
 ///@param f reference of pointers to class Function
@@ -248,7 +280,7 @@ bool selectFuncion(vector<Function *> &f){
 	cout << "value should be between 0 and " << max_index - 1 << endl;
 	if(!safeInsert(select_index, 0, max_index-1)) return false;
 	while(1){
-		printf("\e[1;1H\e[2J");
+		clrscr();
 		cout << "### function selected ###" << endl;
 		f[select_index]->Dump();
 		cout << "0 - exit evaluation" << endl;
@@ -264,10 +296,23 @@ bool selectFuncion(vector<Function *> &f){
 			cout << "insert evaluation point (x = )" << endl;
 			safeInsert(x);
 			cout << "f("<< x << ") = " << f[select_index]->GetValue(x) << endl;
-			cout << "(press enter to continue)" << endl;
-			getchar();
+			safeInsert();
 			break;
 		}
 	}
 	return true;
+}
+
+// ##################### ESTETIC FUNCTIONS #####################
+
+/// @brief clears the screen
+/// @note works ONLY on ANSI machines 
+/// more in https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+void clrscr(){
+	//What is it doing?
+	// \e  -> escape the printf()
+	// [1;1H moves cursor to line 1 and column 1 of terminal
+	// [2J   erase entire screen
+	// [3J   erase saved lines
+	printf("\e[1;1H\e[2J\e[3J");
 }

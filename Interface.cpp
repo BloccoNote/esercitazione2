@@ -275,8 +275,6 @@ bool eraseAllFunctions(vector<Function *> &f){
 			f.erase(f.end());
 		}
 	}
-	///TODO: metti messaggi più belli
-	cout << "[ INFO ] success" << endl;
 	return true;
 }
 

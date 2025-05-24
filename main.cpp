@@ -1,9 +1,3 @@
-///TODO: add Interface.cpp and Interface.h
-///TODO: add doxygen comments to files
-///TODO: add doxygen comments to safeInsert.cpp
-///TODO: add try_count to safeInsert(range) and (cond) for both int and double
-///TODO: polish code and program
-
 //standard headers
 #include <bits/stdc++.h>
 #include "stdio.h"
@@ -68,6 +62,7 @@ int main(){
 		}
 	}
 	cout << "[ ERRRO ] OUT OF BOUDNS " << endl;
+	eraseAllFunctions(F);
 	return 1;
 }
 

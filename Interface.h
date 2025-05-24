@@ -32,6 +32,7 @@
 	bool insertPoly(vector<Function *> &f);
 	bool insertPow(vector<Function *> &f);
 	bool insertExp(vector<Function *> &f);
+	bool final_insertion(vector<Function *> &f, Function* func, const char* func_name);
 	/// @}
 	
 	
@@ -41,6 +42,7 @@
 	bool eraseFunction(vector<Function *> &f);
 	bool eraseAllFunctions(vector<Function *> &f);
 	bool selectFuncion(vector<Function *> &f);
+	bool final_erase(vector<Function *> &f, int erase_index);
 	/// @}
 
 	/// @name estetic functions

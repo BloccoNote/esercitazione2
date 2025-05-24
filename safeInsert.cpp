@@ -4,6 +4,7 @@
 */ 
 
 #include "safeInsert.h"
+bool scp = false; //saved cursor position 
 
 /// @brief handle the (press enter) insertion
 /// @return true
@@ -18,11 +19,17 @@ void safeInsert(){
 /// @param value reference to integer value desidered
 /// @return false in case of an error
 bool safeInsert(int &value ){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	char str[MAX_STRING_SIZE] = {0};
 	int try_count = 0;
 	char escape = '\0';
 	while(try_count < MAX_ATTEMPT){
+		printf("\e[u\e[2K");
 		scanf("%[^\n]s", str);
+		printf("\e[J");
 		getchar(); //gets the '\n' still in stdin buffer
 		if(strlen(str) == 0){
 			cout << "[ ERROR ] Input value is NULL" << endl;
@@ -35,6 +42,7 @@ bool safeInsert(int &value ){
 			escape = '\0';
 		}
 		else{
+			scp = false;
 			return true;
 		}
 		try_count++;
@@ -49,11 +57,17 @@ bool safeInsert(int &value ){
 /// @param value reference to double value desidered
 /// @return false in case of an error
 bool safeInsert(double &value){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	char str[MAX_STRING_SIZE];
 	int try_count = 0;
 	char escape = '\0';
 	while(try_count < MAX_ATTEMPT){
-		scanf("%[^\n]s", &str);
+		printf("\e[u\e[2K");
+		scanf("%[^\n]s", str);
+		printf("\e[J");
 		getchar(); //gets the '\n' still in stdin buffer
 		if(strchr(str, ' ') != NULL){
 			cout << "[ ERROR ] Expecting only one value" << endl;
@@ -63,6 +77,7 @@ bool safeInsert(double &value){
 			escape = '\0';
 		}
 		else{
+			scp = false;
 			return true;
 		}
 		try_count++;
@@ -78,18 +93,25 @@ bool safeInsert(double &value){
 /// @param to superior bound
 /// @return false in case of an error
 bool safeInsert(int &value, int from, int to){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	int try_count = 0;
 	while(try_count < MAX_ATTEMPT){
 		if(!safeInsert(value)) return false;
 		if(value >= from && value <= to){
 			return true;
+			scp = false;
 		}
 		try_count++;
 		cout << "[ ERROR ] value should be in range [ " << from << " , " << to << "] " << endl;
 		cout << " [ INFO ] attempts left :  " << MAX_ATTEMPT - try_count << endl;
+		scp = true;
 	}
 	cout << "[ ERROR ] too many wrong attempts" << endl;
 	cout << "          MAX_ATTEMPT = " << MAX_ATTEMPT << endl;
+	scp = false;
 	return false;
 }
 
@@ -100,18 +122,25 @@ bool safeInsert(int &value, int from, int to){
 /// @param to superior bound
 /// @return false in case of an error
 bool safeInsert(double &value, double from, double to){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	int try_count = 0;
 	while(try_count < MAX_ATTEMPT){
 		if(!safeInsert(value)) return false;
 		if(value >= from && value <= to){
+			scp = false;
 			return true;
 		}
 		try_count++;
 		cout << "[ ERROR ] value should be in range [ " << from << " , " << to << "] " << endl;
 		cout << " [ INFO ] attempts left :  " << MAX_ATTEMPT - try_count << endl;
+		scp = true;
 	}
 	cout << "[ ERROR ] too many wrong attempts" << endl;
 	cout << "          MAX_ATTEMPT = " << MAX_ATTEMPT << endl;
+	scp = false;
 	return false;
 }
 
@@ -121,6 +150,10 @@ bool safeInsert(double &value, double from, double to){
 /// @param C the condition, could be GT, GE, LT, LE
 /// @return false in case of an error
 bool safeInsert(int &value, int cond_value, condition C){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	bool cond = true;
 	int try_count = 0;
 	do{
@@ -142,13 +175,16 @@ bool safeInsert(int &value, int cond_value, condition C){
 			value <= cond_value ? cond = false : printf("[ ERROR ] value should be <= %d\n", cond_value);
 			break;
 		}
+		scp = cond;
 		try_count++;
 	}while(cond && try_count < MAX_ATTEMPT);
 	if(try_count == MAX_ATTEMPT){
 		cout << "[ ERROR ] too many wrong attempts" << endl;
 		cout << "          MAX_ATTEMPT = " << MAX_ATTEMPT << endl;
+		scp = false;
 		return false;
 	}
+	scp = false;
 	return true;
 }
 
@@ -158,6 +194,10 @@ bool safeInsert(int &value, int cond_value, condition C){
 /// @param C the condition, could be GT, GE, LT, LE
 /// @return false in case of an error
 bool safeInsert(double &value, double cond_value , condition C){
+	if(!scp){
+		printf("\e[s");
+		scp = true;
+	}
 	bool cond = true;
 	int try_count = 0;
 	do{
@@ -179,12 +219,15 @@ bool safeInsert(double &value, double cond_value , condition C){
 			value <= cond_value ? cond = false : printf("[ ERROR ] value should be <= %lf\n", cond_value);
 			break;
 		}
+		scp = cond;
 		try_count++;
 	}while(cond && try_count < MAX_ATTEMPT);
 	if(try_count == MAX_ATTEMPT){
 		cout << "[ ERROR ] too many wrong attempts" << endl;
 		cout << "          MAX_ATTEMPT = " << MAX_ATTEMPT << endl;
+		scp = false;
 		return false;
 	}
+	scp = false;
 	return true;
-	}
+}

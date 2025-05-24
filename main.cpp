@@ -31,7 +31,10 @@ int main(){
 	int mode = 0;
 
 	while(1){
-		if((mode = menu()) == -1) return 1;
+		if((mode = menu()) == -1){
+			eraseAllFunctions(F);
+			return 1;
+		} 
 		switch (mode)
 		{
 		case 0:

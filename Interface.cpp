@@ -105,12 +105,7 @@ bool insertLog(vector<Function *> &f){
 	}
 	l->SetLogarithmic(b, k);
 	Function* func = l;
-	f.push_back(func);
-	clrscr();
-	cout << "### FINAL LOGARITHM ###" << endl;
-	cout << "Log = ";
-	l->Dump();
-	safeInsert();
+	final_insertion(f, func, "logarithm");
 	return true;
 }
 
@@ -144,11 +139,8 @@ bool insertPoly(vector<Function *> &f){
 		safeInsert(c[i]);
 	}
 	p = new Polynomial(c, d + 1);
-	clrscr();
-	cout << "### FINAL POLYNOMIAL ###" << endl;
-	cout << "Poly = ";
-	p->Dump();
-	f.push_back(p);
+	Function* func = p;
+	final_insertion(f, func, "polynomial");
 	return true;
 }
 
@@ -169,12 +161,8 @@ bool insertPow(vector<Function *> &f){
 	cout << "insert e coefficent" << endl;
 	safeInsert(e);
 	p = new Power(k, e);
-	f.push_back(p);
-	clrscr();
-	cout << "### FINAL POWER ###" << endl;
-	cout << "Pow = ";
-	p->Dump();
-	safeInsert();
+	Function * func = p;
+	final_insertion(f, func, "power");
 	return true;
 }
 
@@ -199,12 +187,43 @@ bool insertExp(vector<Function *> &f){
 	cout << "insert c coefficent" << endl;
 	safeInsert(c);
 	e = new Exponential(k, b ,c);
-	f.push_back(e);
+	Function * func = e;
+	final_insertion(f, func, "exponential");
+	return true;
+}
+
+bool final_insertion(vector<Function *> &f, Function* func, const char* func_name){
+	int not_to_list = 0;
 	clrscr();
-	cout << "### FINAL EXPONENTIAL ###" << endl;
-	cout << "Exp = ";
-	e->Dump();
-	safeInsert();
+	cout << "### final " << func_name << "###" << endl;
+	cout << "f(x) = ";
+	func->Dump();
+	cout << "add function to list?" << endl;
+	cout << "[y = 0 / N = 1]" << endl;
+	safeInsert(not_to_list, 0 , 1);
+	if(not_to_list){
+		delete func;
+	}
+	else{
+		f.push_back(func);
+	}
+	return true;
+}
+
+bool final_erase(vector<Function *> &f, int erase_index){
+	int dont_erase = 0;
+	clrscr();
+	cout << "### function erase ###" << endl;
+	cout << "function selected: f(x) = ";
+	f[erase_index]->Dump();
+	cout << "delete the function ?" << endl;
+	cout << "[y = 0 / N = 1]" << endl;
+	safeInsert(dont_erase, 0 , 1);
+	if(!dont_erase){
+		delete f[erase_index];
+		f[erase_index] = NULL;
+		f.erase(f.begin() + erase_index);
+	}
 	return true;
 }
 
@@ -241,10 +260,7 @@ bool eraseFunction(vector<Function *> &f){
 	}
 	cout << "insert the index of function to delete" << endl;
 	if(!safeInsert(erase_index, 0, max_index-1)) return false;
-	delete f[erase_index];
-	f[erase_index] = NULL;
-	f.erase(f.begin() + erase_index);
-	
+	final_erase(f, erase_index);	
 	return true;
 }
 
@@ -281,18 +297,21 @@ bool selectFuncion(vector<Function *> &f){
 	if(!safeInsert(select_index, 0, max_index-1)) return false;
 	while(1){
 		clrscr();
-		cout << "### function selected ###" << endl;
+		cout << "### function selected ###" << endl << "f(x) = ";
 		f[select_index]->Dump();
 		cout << "0 - exit evaluation" << endl;
 		cout << "1 - evaluate funciton" << endl;
 		if(!safeInsert(mode, 0 , 1)) return false;
-		cout << "###   ###" << endl;
 		switch(mode)
 		{
 		case 0:
 			return true;
 
 		case 1:
+			clrscr();
+			cout << "###   ###" << endl;
+			cout << "f(x) = ";
+			f[select_index]->Dump();
 			cout << "insert evaluation point (x = )" << endl;
 			safeInsert(x);
 			cout << "f("<< x << ") = " << f[select_index]->GetValue(x) << endl;
